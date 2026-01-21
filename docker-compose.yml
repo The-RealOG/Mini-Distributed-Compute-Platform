@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  coordinator:
+    build:
+      context: ./coordinator
+      dockerfile: Dockerfile
+    container_name: coordinator
+    ports:
+      - "8000:8000"
+    environment:
+      - RUNNER_URL=http://runner:8080
+    networks:
+      - platform-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+  runner:
+    build:
+      context: ./runner
+      dockerfile: Dockerfile
+    container_name: runner
+    ports:
+      - "8080:8080"
+    networks:
+      - platform-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          cpus: '1.0'
+          memory: 512M
+    # Security: read-only root filesystem where possible
+    read_only: false
+    # Security: drop capabilities
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+
+networks:
+  platform-network:
+    driver: bridge
