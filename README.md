@@ -101,7 +101,8 @@ This platform provides:
 ```
 
 ### Container Architecture
-![Container Architecture Diagram](/Users/chibuezekingsleyanyachebelu/Downloads/Systems\ design\ summary.png)
+<img width="2122" height="1840" alt="image" src="https://github.com/user-attachments/assets/4b5e27a0-fcd4-42cc-97e3-514b00ec50ee" />
+
 
 
 ### Data Flow
